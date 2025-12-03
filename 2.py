@@ -1,7 +1,7 @@
 
 
 def p1():
-    f = open("2.txt")
+    f = open("d2.txt")
     score = 0
     for line in f:
         for span in line.split(","):
@@ -19,7 +19,7 @@ def p1():
 
 
 def p2():
-    f = open("2.txt")
+    f = open("d2.txt")
     score = 0
     for line in f:
         for span in line.split(","):

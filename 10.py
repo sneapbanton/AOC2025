@@ -1,6 +1,7 @@
 from tqdm import tqdm
-import sys
 from functools import cache
+import numpy as np
+from z3 import *
 
 @cache
 def search(goal, state, buttons):
@@ -44,4 +45,49 @@ def p1():
         # print(res)
 
     print(score)
-p1()
+
+
+def p2():
+    score = 0
+    f = open("d10.txt")
+    goals = []
+    butts = []
+    for line in f:
+        fields = line.split(" ")
+        goal = fields[-1]
+        buttons = fields[1:-1]
+        goals.append(goal)
+        butts.append(buttons)
+
+    for i in tqdm(range(len(goals))):
+        solver = Solver()
+        goal = goals[i][1:-1] if "\n" not in goals[i] else goals[i][1:-2]
+        buttons = butts[i]
+        button_presses = []
+        g = [int(x) for x in goal.split(",")]
+
+        expr = [0 for x in range(len(g))]
+        for k, button in enumerate(buttons):
+            new_var = Int("b"+str(k))
+            solver.add(new_var > -1)
+            button_presses.append(new_var)
+            for x in button[1:-1].split(","):
+                # print(int(x))
+                expr[int(x)] = expr[int(x)]+new_var
+
+        for k, x in enumerate(g):
+            eq = expr[k] == x
+            solver.add(eq)
+
+        print(solver)
+        if solver.check() == sat:
+            model = solver.model()
+            print(model)
+
+        # print(g)
+        # print(button_presses)
+
+    print(score)
+
+
+p2()

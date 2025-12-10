@@ -42,7 +42,6 @@ def p1():
             bs.append(b)
         res = search(tuple(g),tuple([False for x in range(len(g))]), tuple(bs))
         score += res
-        # print(res)
 
     print(score)
 
@@ -60,7 +59,7 @@ def p2():
         butts.append(buttons)
 
     for i in tqdm(range(len(goals))):
-        solver = Solver()
+        solver = Optimize()
         goal = goals[i][1:-1] if "\n" not in goals[i] else goals[i][1:-2]
         buttons = butts[i]
         button_presses = []
@@ -72,20 +71,17 @@ def p2():
             solver.add(new_var > -1)
             button_presses.append(new_var)
             for x in button[1:-1].split(","):
-                # print(int(x))
                 expr[int(x)] = expr[int(x)]+new_var
 
+        solver.minimize(sum(button_presses))
         for k, x in enumerate(g):
             eq = expr[k] == x
             solver.add(eq)
 
-        print(solver)
         if solver.check() == sat:
             model = solver.model()
-            print(model)
-
-        # print(g)
-        # print(button_presses)
+            vals = [model[b].as_long() for b in button_presses]
+            score += sum(vals)
 
     print(score)
 
